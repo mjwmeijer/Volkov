@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Security Game</title>
+    <style>
+      #board{
+        background:url("GameBackground.jpg");
+        background-size:contain;
+        repeat:no-repeat;
+        border:1px solid black;
+        height:35rem;
+        width:70%;
+        margin:auto;
+        display:flex;
+        justify-content: space-around;
+        flex-wrap:wrap;
+        align-items:center;
+      }
+      .character{
+        background:url("Guest.jpg");
+        background-size: cover;
+        width:7rem;
+        height:7rem;
+        padding:0.6rem;
+        margin:0.6rem;
+
+        display:none;
+      }
+      .hidden{
+        display: none;
+      }
+      .visible{
+        display:block;
+        cursor:pointer;
+      }
+      .visible:active{
+        opacity:0.5;
+      }
+      .thief{
+        background:url("Thief.jpg");
+        background-size:cover;
+      }
+    </style>
+  </head>
+  <body style="text-align:center;">
+    <p style="font-size:24px;margin:0px;padding:10px;">Instructions: Sharpen your reaction time! There is a thief among the guests
+      present at the exhibition. Click on the thief and you score 1 point. Don't click on any of the guests, or you will lose 2 points.
+      Maximum points: 10. Hurry!</p>
+    <input type="button" value="Play" onclick="startGame();" style="height:40px;width:140px;margin:20px;font-size:32px;" />
+    <span style="font-size:32px;border:4px black solid;color:red;padding:0px 10px;font-weight:bold;">Score: <span id="score">0</span></span>
+    <span style="font-size:32px;border:4px black solid;color:red;padding:0px 10px;font-weight:bold;">Max score: <span id="maxscore"></span></span>
+    <div id="board">
+      <div class="character"></div><!--getallen 1 t/m 6 verwijderd, anders worden ze getoond op het plaatje-->
+      <div class="character"></div>
+      <div class="character"></div>
+      <div class="character"></div>
+      <div class="character"></div>
+      <div class="character"></div>
+      <div class="character"></div>
+      <div class="character"></div>
+      <div class="character"></div>
+      <div class="character"></div>
+      <div class="character"></div>
+      <div class="character"></div>
+      <div class="character"></div>
+      <div class="character"></div>
+      <div class="character"></div>
+      <div class="character"></div>
+      <div class="character"></div>
+      <div class="character"></div>
+      <div class="character"></div>
+      <div class="character"></div>
+      <div class="character"></div>
+    </div>
+      <a href="index.html" style="display:block;margin-top:20px;font-size:30px">Home</a>
+    <script>
+
+    document.getElementById("maxscore").innerHTML=localStorage.maxScore;
+
+      function startGame(){
+        gameLoop();
+      }
+      var loops = 0;
+      var peopleVisible=false;
+      var gameScore =0;
+
+      function gameLoop(){
+        peopleVisible = !peopleVisible;
+        createCharacters();
+        loops++;
+        if(loops<20){
+        //  setTimeout(gameLoop,3000) (variant boek, gameLoop zonder haakjes)
+          setTimeout(function(){gameLoop()},peopleVisible? 3000:1000);//alternatief w3schools
+        }
+        else{
+          if(!localStorage.maxScore) {
+            localStorage.maxScore = gameScore;
+          }
+          else {
+            localStorage.maxScore = Math.max(localStorage.maxScore,gameScore);
+          }
+          alert("You scored "+gameScore);
+          setTimeout(function(){location.reload()},100);
+          //setTimeout(function(){document.getElementsByTagName("input")[0].setAttribute("value","Replay");},1500); werkt niet
+          }
+        }
+      function createCharacters(){
+        var board = document.getElementById("board");
+        var classToSet = peopleVisible? "character visible":"character hidden";
+        for(var index =0;index<21;index++){
+          board.children[index].className=classToSet;
+        //  board.children[index].innerHTML="Guest"; (in het boek wordt innerHTML op "" gezet. Kan ook)
+          board.children[index].onclick = function(){
+            gameScore +=-2;
+            document.getElementById("score").innerHTML=gameScore;
+            for (var index2 =0;index2<21;index2++){
+              board.children[index2].className="character hidden";
+            }
+          }
+        }
+        var randomNumber=Math.floor(Math.random()*21);
+        //board.children[randomNumber].innerHTML="Thief";(in het boek wordt innerHTML op "" gezet. Kan ook)
+        board.children[randomNumber].className=classToSet+" thief";
+        board.children[randomNumber].onclick = function(){
+          gameScore++;
+          document.getElementById("score").innerHTML=gameScore;
+          for (var index =0;index<21;index++){
+            board.children[index].className="character hidden";
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
